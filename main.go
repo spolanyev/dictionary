@@ -3,6 +3,7 @@
 package main
 
 import (
+	cmd "dictionary/command"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -29,7 +30,7 @@ func main() {
 			return
 		}
 
-		payload := CommandPayload{}
+		payload := cmd.CommandPayload{}
 		err = json.Unmarshal([]byte(urlQuery), &payload)
 		if err != nil {
 			fmt.Println("Error parsing JSON:", err)
@@ -79,23 +80,23 @@ func main() {
 	}
 }
 
-func getCommand(payload CommandPayload) CommandInterface {
+func getCommand(payload cmd.CommandPayload) cmd.CommandInterface {
 
 	fmt.Printf("Command: name - %q, params - %#q\n", payload.Name, payload.Params)
 
 	switch payload.Name {
 	case "getUserFiles":
-		return &GetUserFilesCommand{}
+		return &cmd.GetUserFilesCommand{}
 	case "getUserFileWords":
-		return &GetUserFileWordsCommand{}
+		return &cmd.GetUserFileWordsCommand{}
 	case "getLetterWords":
-		return &GetLetterWordsCommand{}
+		return &cmd.GetLetterWordsCommand{}
 	case "getWordInformation":
-		return &GetWordInformationCommand{}
+		return &cmd.GetWordInformationCommand{}
 	case "getWordDetails":
-		return &GetWordDetailsCommand{}
+		return &cmd.GetWordDetailsCommand{}
 	case "updateWordDetails":
-		return &UpdateWordDetailsCommand{}
+		return &cmd.UpdateWordDetailsCommand{}
 	default:
 		return nil
 	}

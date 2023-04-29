@@ -1,6 +1,6 @@
 //@author Stanislav Polaniev <spolanyev@gmail.com>
 
-package main
+package dto
 
 type WordDetailsDto struct {
 	Message string
@@ -9,16 +9,16 @@ type WordDetailsDto struct {
 	Data    WordDetailsData
 }
 
-func (dto *WordDetailsDto) ToMap() map[string]interface{} {
+func (object *WordDetailsDto) ToMap() map[string]interface{} {
 	result := make(map[string]interface{})
-	result["message"] = dto.Message
-	result["from"] = dto.From
-	result["isError"] = dto.IsError
+	result["message"] = object.Message
+	result["from"] = object.From
+	result["isError"] = object.IsError
 	data := make(map[string]interface{})
-	data["safeName"] = dto.Data.SafeName
-	data["word"] = dto.Data.Word
+	data["safeName"] = object.Data.SafeName
+	data["word"] = object.Data.Word
 	typeData := make(map[string]interface{})
-	for k, v := range dto.Data.Type {
+	for k, v := range object.Data.Type {
 		typeDetails := make(map[string]interface{})
 		typeDetails["transcription"] = v.Transcription
 		typeDetails["translation"] = v.Translation
@@ -26,10 +26,10 @@ func (dto *WordDetailsDto) ToMap() map[string]interface{} {
 		typeData[k] = typeDetails
 	}
 	data["type"] = typeData
-	data["familyword"] = dto.Data.FamilyWord
+	data["familyword"] = object.Data.FamilyWord
 	rawData := make(map[string]interface{})
 	rawTypeData := make(map[string]interface{})
-	for k, v := range dto.Data.Raw.Type {
+	for k, v := range object.Data.Raw.Type {
 		rawTypeDetails := make(map[string]interface{})
 		rawTypeDetails["transcription"] = v.Transcription
 		rawTypeDetails["translation"] = v.Translation
@@ -38,10 +38,10 @@ func (dto *WordDetailsDto) ToMap() map[string]interface{} {
 		rawTypeData[k] = rawTypeDetails
 	}
 	rawData["type"] = rawTypeData
-	rawData["suggestedVariant"] = dto.Data.Raw.SuggestedVariant
-	rawData["americanEquivalent"] = dto.Data.Raw.AmericanEquivalent
-	rawData["isFamily"] = dto.Data.Raw.IsFamily
-	rawData["locale"] = dto.Data.Raw.Locale
+	rawData["suggestedVariant"] = object.Data.Raw.SuggestedVariant
+	rawData["americanEquivalent"] = object.Data.Raw.AmericanEquivalent
+	rawData["isFamily"] = object.Data.Raw.IsFamily
+	rawData["locale"] = object.Data.Raw.Locale
 	data["raw"] = rawData
 	result["data"] = data
 	return result

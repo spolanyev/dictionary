@@ -1,6 +1,6 @@
 //@author Stanislav Polaniev <spolanyev@gmail.com>
 
-package main
+package dto
 
 type WordInformationDto struct {
 	Message string
@@ -9,13 +9,13 @@ type WordInformationDto struct {
 	Data    WordInformationData
 }
 
-func (dto *WordInformationDto) ToMap() map[string]interface{} {
+func (object *WordInformationDto) ToMap() map[string]interface{} {
 	data := make(map[string]interface{})
-	data["safename"] = dto.Data.SafeName
-	data["word"] = dto.Data.Word
+	data["safename"] = object.Data.SafeName
+	data["word"] = object.Data.Word
 
 	typeData := make(map[string]interface{})
-	for typeName, typeInfo := range dto.Data.Type {
+	for typeName, typeInfo := range object.Data.Type {
 		typeMap := make(map[string]interface{})
 		typeMap["transcription"] = typeInfo.Transcription
 		typeMap["translation"] = typeInfo.Translation
@@ -29,9 +29,9 @@ func (dto *WordInformationDto) ToMap() map[string]interface{} {
 	data["type"] = typeData
 
 	result := make(map[string]interface{})
-	result["message"] = dto.Message
-	result["from"] = dto.From
-	result["isError"] = dto.IsError
+	result["message"] = object.Message
+	result["from"] = object.From
+	result["isError"] = object.IsError
 	result["data"] = data
 
 	return result
