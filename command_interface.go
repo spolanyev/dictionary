@@ -3,5 +3,5 @@
 package main
 
 type CommandInterface interface {
-	Execute(params *map[string]interface{}) map[string]interface{}
+	Execute(params map[string]interface{}) map[string]interface{}
 }

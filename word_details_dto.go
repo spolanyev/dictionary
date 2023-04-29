@@ -22,9 +22,6 @@ func (dto *WordDetailsDto) ToMap() map[string]interface{} {
 		typeDetails := make(map[string]interface{})
 		typeDetails["transcription"] = v.Transcription
 		typeDetails["translation"] = v.Translation
-		if v.Level != nil {
-			typeDetails["level"] = *v.Level
-		}
 		typeDetails["audio"] = v.Audio
 		typeData[k] = typeDetails
 	}
@@ -37,9 +34,7 @@ func (dto *WordDetailsDto) ToMap() map[string]interface{} {
 		rawTypeDetails["transcription"] = v.Transcription
 		rawTypeDetails["translation"] = v.Translation
 		rawTypeDetails["audio"] = v.Audio
-		if v.Level != nil {
-			rawTypeDetails["level"] = v.Level
-		}
+		rawTypeDetails["level"] = v.Level
 		rawTypeData[k] = rawTypeDetails
 	}
 	rawData["type"] = rawTypeData

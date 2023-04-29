@@ -36,13 +36,13 @@ func main() {
 			return
 		}
 
-		command := getCommand(&payload)
+		command := getCommand(payload)
 		if command == nil {
 			fmt.Printf("Unknown command name: %q\n", payload.Name)
 			return
 		}
 
-		result := command.Execute(&payload.Params)
+		result := command.Execute(payload.Params)
 		fmt.Printf("Result: %q\n", result)
 
 		writer.Header().Set("Content-Type", "application/json")
@@ -79,7 +79,7 @@ func main() {
 	}
 }
 
-func getCommand(payload *CommandPayload) CommandInterface {
+func getCommand(payload CommandPayload) CommandInterface {
 
 	fmt.Printf("Command: name - %q, params - %#q\n", payload.Name, payload.Params)
 
