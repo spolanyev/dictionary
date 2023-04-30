@@ -23,7 +23,7 @@ func (object *WordInformationDto) ToMap() map[string]interface{} {
 			typeMap["level"] = *typeInfo.Level
 		}
 		typeMap["audio"] = typeInfo.Audio
-		typeData[typeName] = typeMap
+		typeData[string(typeName)] = typeMap
 	}
 
 	data["type"] = typeData

@@ -4,6 +4,8 @@ package main
 
 import (
 	cmd "dictionary/command"
+	"dictionary/library"
+	strg "dictionary/storage"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -92,7 +94,10 @@ func getCommand(payload cmd.CommandPayload) cmd.CommandInterface {
 	case "getLetterWords":
 		return &cmd.GetLetterWordsCommand{}
 	case "getWordInformation":
-		return &cmd.GetWordInformationCommand{}
+		fileManipulator := &library.FileManipulator{}
+		storage := strg.NewWordFileStorage(fileManipulator)
+		loader := strg.NewWordDataLoader(storage)
+		return cmd.NewGetWordInformationCommand(loader)
 	case "getWordDetails":
 		return &cmd.GetWordDetailsCommand{}
 	case "updateWordDetails":
