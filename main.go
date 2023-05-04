@@ -4,8 +4,8 @@ package main
 
 import (
 	cmd "dictionary/command"
-	"dictionary/library"
-	strg "dictionary/storage"
+	lib "dictionary/library"
+	stor "dictionary/storage"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -18,7 +18,7 @@ func main() {
 
 	http.HandleFunc("/dictionary/run.php", func(writer http.ResponseWriter, request *http.Request) {
 
-		fmt.Println("---------------- Triggered handler for `/dictionary/run.php` route ----------------")
+		fmt.Println(lib.ColorBlue, "---------------- Triggered handler for `/dictionary/run.php` route ----------------", lib.ColorReset)
 
 		urlStruct, err := url.Parse(request.RequestURI)
 		if err != nil {
@@ -41,12 +41,12 @@ func main() {
 
 		command := getCommand(payload)
 		if command == nil {
-			fmt.Printf("Unknown command name: %q\n", payload.Name)
+			fmt.Printf("%sUnknown command: %q%s\n", lib.ColorRed, payload.Name, lib.ColorReset)
 			return
 		}
 
 		result := command.Execute(payload.Params)
-		fmt.Printf("Result: %q\n", result)
+		fmt.Printf("%sResult: %q%s\n", lib.ColorGreen, result, lib.ColorReset)
 
 		writer.Header().Set("Content-Type", "application/json")
 		err = json.NewEncoder(writer).Encode(&result)
@@ -58,13 +58,13 @@ func main() {
 
 	http.HandleFunc("/dictionary/data/", func(writer http.ResponseWriter, request *http.Request) {
 
-		fmt.Println("---------------- Triggered handler for `/dictionary/data/` route ----------------")
+		fmt.Println(lib.ColorBlue, "---------------- Triggered handler for `/dictionary/data/` route ----------------", lib.ColorReset)
 
 		if strings.HasPrefix(request.URL.Path, "/dictionary/data/") {
 			filePath := request.URL.Path[len("/dictionary/data/"):]
 			if extension := filepath.Ext(filePath); extension == ".mp3" {
 
-				fmt.Printf("File: %#q\n", filePath)
+				fmt.Printf("%sFile: %q%s\n", lib.ColorYellow, filePath, lib.ColorReset)
 
 				http.ServeFile(writer, request, "data/"+filePath)
 				return
@@ -84,7 +84,7 @@ func main() {
 
 func getCommand(payload cmd.CommandPayload) cmd.CommandInterface {
 
-	fmt.Printf("Command: name - %q, params - %#q\n", payload.Name, payload.Params)
+	fmt.Printf("%sCommand: name - %q, params - %q%s\n", lib.ColorCyan, payload.Name, payload.Params, lib.ColorReset)
 
 	switch payload.Name {
 	case "getUserFiles":
@@ -94,12 +94,15 @@ func getCommand(payload cmd.CommandPayload) cmd.CommandInterface {
 	case "getLetterWords":
 		return &cmd.GetLetterWordsCommand{}
 	case "getWordInformation":
-		fileManipulator := &library.FileManipulator{}
-		storage := strg.NewWordFileStorage(fileManipulator)
-		loader := strg.NewWordDataLoader(storage)
+		fileManipulator := &lib.FileManipulator{}
+		storage := stor.NewWordFileStorage(fileManipulator)
+		loader := stor.NewWordDataLoader(storage)
 		return cmd.NewGetWordInformationCommand(loader)
 	case "getWordDetails":
-		return &cmd.GetWordDetailsCommand{}
+		fileManipulator := &lib.FileManipulator{}
+		storage := stor.NewWordFileStorage(fileManipulator)
+		loader := stor.NewWordDataLoader(storage)
+		return cmd.NewGetWordDetailsCommand(loader)
 	case "updateWordDetails":
 		return &cmd.UpdateWordDetailsCommand{}
 	default:
