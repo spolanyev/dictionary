@@ -2,6 +2,6 @@
 
 package command
 
-type CommandInterface interface {
+type Interface interface {
 	Execute(params map[string]interface{}) map[string]interface{}
 }

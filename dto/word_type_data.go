@@ -5,6 +5,6 @@ package dto
 type WordTypeData struct {
 	Transcription string
 	Translation   []string
-	Level         *[]string //is optional
-	Audio         []string
+	Level         *[]Level //is optional
+	Audio         []AudioData
 }
