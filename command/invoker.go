@@ -2,16 +2,19 @@
 
 package command
 
-import stor "dictionary/storage"
+import (
+	"dictionary/dto"
+	stor "dictionary/storage"
+)
 
 type Invoker struct {
-	commands map[string]Interface
+	commands map[string]CommandInterface
 }
 
 func NewCommandInvoker() *Invoker {
 	loader := stor.GetLoader()
 	return &Invoker{
-		commands: map[string]Interface{
+		commands: map[string]CommandInterface{
 			"getUserFiles":       &GetUserFiles{},
 			"getUserFileWords":   &GetUserFileWords{},
 			"getLetterWords":     &GetLetterWords{},
@@ -25,11 +28,7 @@ func NewCommandInvoker() *Invoker {
 func (invoker *Invoker) Invoke(name string, params map[string]interface{}) map[string]interface{} {
 	command, exists := invoker.commands[name]
 	if !exists {
-		return map[string]interface{}{
-			"isError": true,
-			"from":    "invoker",
-			"message": "Unknown command",
-		}
+		return (&dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}).ToMap()
 	}
-	return command.Execute(params)
+	return command.Execute(params).ToMap()
 }

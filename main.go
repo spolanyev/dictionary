@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	// TODO process word `affirmatively`
 	invoker := cmd.NewCommandInvoker()
 
 	http.HandleFunc("/dictionary/run.php", func(writer http.ResponseWriter, request *http.Request) {
