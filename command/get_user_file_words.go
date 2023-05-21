@@ -6,9 +6,7 @@ import (
 	"dictionary/dto"
 	lib "dictionary/library"
 	stor "dictionary/storage"
-	"fmt"
 	"path/filepath"
-	"runtime"
 )
 
 type GetUserFileWords struct {
@@ -21,18 +19,14 @@ func (cmd *GetUserFileWords) Execute(params map[string]interface{}) dto.Response
 		return &dto.ErrorMessage{Message: "Invalid params", From: "GetUserFileWords"}
 	}
 	fileName = filepath.Base(fileName)
-
-	_, currentFile, _, ok := runtime.Caller(0)
-	if !ok {
-		panic("No caller information")
-	}
-	directory := filepath.Dir(currentFile)
-	fullPathDirectory, err := filepath.Abs(directory)
+	fullPathDirectory, err := lib.GetFullPathSourceDirectory()
 	if err != nil {
-		fmt.Println("Error getting absolute path:", err)
+		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}
-
-	fullPathFile := filepath.Join(filepath.Dir(fullPathDirectory), stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
-	words := cmd.FileManipulator.GetSlice(fullPathFile)
+	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
+	words, err := cmd.FileManipulator.GetSlice(fullPathFile)
+	if err != nil {
+		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
+	}
 	return &dto.Message{Message: "", From: "getUserFileWords", Data: words, IsError: false}
 }
