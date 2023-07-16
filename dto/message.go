@@ -1,3 +1,5 @@
+//@author Stanislav Polaniev <spolanyev@gmail.com>
+
 package dto
 
 type Message struct {
@@ -14,7 +16,7 @@ func (message *Message) ToMap() map[string]interface{} {
 	if message.Data != nil {
 		if response, ok := message.Data.(ResponseInterface); ok {
 			result["data"] = response.ToMap()
-		} else if message.Data != nil {
+		} else {
 			result["data"] = message.Data
 		}
 	}
