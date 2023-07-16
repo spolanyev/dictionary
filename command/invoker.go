@@ -27,8 +27,8 @@ func NewCommandInvoker() *Invoker {
 }
 
 func (invoker *Invoker) Invoke(name string, params map[string]interface{}) map[string]interface{} {
-	command, exists := invoker.commands[name]
-	if !exists {
+	command, ok := invoker.commands[name]
+	if !ok {
 		return (&dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}).ToMap()
 	}
 	return command.Execute(params).ToMap()
