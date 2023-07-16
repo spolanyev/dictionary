@@ -28,5 +28,5 @@ func (cmd *GetUserFileWords) Execute(params map[string]interface{}) dto.Response
 	if err != nil {
 		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}
-	return &dto.Message{Message: "", From: "getUserFileWords", Data: words, IsError: false}
+	return &dto.SuccessMessage{From: "getUserFileWords", Data: words}
 }
