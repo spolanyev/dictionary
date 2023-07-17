@@ -48,10 +48,10 @@ func TestMessageToMap(t *testing.T) {
 		}},
 	}
 
-	for _, c := range cases {
-		got := c.message.ToMap()
-		if !reflect.DeepEqual(got, c.want) {
-			t.Errorf("ToMap() == %v, want %v", got, c.want)
+	for _, theCase := range cases {
+		got := theCase.message.ToMap()
+		if !reflect.DeepEqual(got, theCase.want) {
+			t.Errorf("ToMap() == %v, want %v", got, theCase.want)
 		}
 	}
 }

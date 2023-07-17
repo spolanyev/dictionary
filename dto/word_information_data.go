@@ -9,20 +9,23 @@ type WordInformationData struct {
 }
 
 func (info *WordInformationData) ToMap() map[string]interface{} {
-	data := make(map[string]interface{})
-	data["safename"] = info.SafeName
-	data["word"] = info.Word
 	typeData := make(map[string]interface{})
 	for typeName, typeInfo := range info.Type {
-		typeMap := make(map[string]interface{})
-		typeMap["transcription"] = typeInfo.Transcription
-		typeMap["translation"] = typeInfo.Translation
+		typeMap := map[string]interface{}{
+			"transcription": typeInfo.Transcription,
+			"translation":   typeInfo.Translation,
+			"audio":         typeInfo.Audio,
+		}
+
 		if typeInfo.Level != nil {
 			typeMap["level"] = *typeInfo.Level
 		}
-		typeMap["audio"] = typeInfo.Audio
 		typeData[string(typeName)] = typeMap
 	}
-	data["type"] = typeData
-	return data
+
+	return map[string]interface{}{
+		"safename": info.SafeName,
+		"word":     info.Word,
+		"type":     typeData,
+	}
 }
