@@ -5,6 +5,7 @@ package library
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"testing"
 )
@@ -67,6 +68,15 @@ func TestFileManipulator(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create test file %s: %s", filename, err)
 		}
+
+		if filename == "file7.txt" {
+			_, err := file.WriteString("line1\nline2\nline3\n\n\n\n")
+			if err != nil {
+				t.Fatalf("Failed to write to file %s: %s", filename, err)
+				return
+			}
+		}
+
 		err = file.Close()
 		if err != nil {
 			t.Fatalf("Failed to close test file %s: %s", filename, err)
@@ -163,4 +173,87 @@ func TestFileManipulator(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("Read", func(t *testing.T) {
+		cases := []struct {
+			file string
+			want string
+		}{
+			{
+				"",
+				"",
+			},
+			{
+				"..",
+				"",
+			},
+			{
+				filepath.Join(nestedDir, "file7.txt"),
+				"line1\nline2\nline3\n\n\n\n",
+			},
+		}
+
+		for _, theCase := range cases {
+			fm := &FileManipulator{}
+			regularFile := theCase.file
+			got, _ := fm.Read(regularFile)
+
+			if got != theCase.want {
+				t.Errorf("File content == %v, want %v", got, theCase.want)
+			}
+		}
+	})
+
+	t.Run("GetLineQuantity", func(t *testing.T) {
+		cases := []struct {
+			file string
+			want int
+		}{
+			{
+				"",
+				0,
+			},
+			{
+				filepath.Join(nestedDir, "file7.txt"),
+				6,
+			},
+		}
+
+		for _, theCase := range cases {
+			fm := &FileManipulator{}
+			regularFile := theCase.file
+			got, _ := fm.GetLineQuantity(regularFile)
+
+			if got != theCase.want {
+				t.Errorf("File line quantity == %v, want %v", got, theCase.want)
+			}
+		}
+	})
+
+	t.Run("GetSlice", func(t *testing.T) {
+		cases := []struct {
+			file string
+			want []string
+		}{
+			{
+				"",
+				[]string{},
+			},
+			{
+				filepath.Join(nestedDir, "file7.txt"),
+				[]string{"line1", "line2", "line3"},
+			},
+		}
+
+		for _, theCase := range cases {
+			fm := &FileManipulator{}
+			regularFile := theCase.file
+			got, _ := fm.GetSlice(regularFile)
+
+			if !reflect.DeepEqual(got, theCase.want) {
+				t.Errorf("Slice == %v, want %v", got, theCase.want)
+			}
+		}
+	})
+
 }
