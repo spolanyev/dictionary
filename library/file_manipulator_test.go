@@ -106,7 +106,7 @@ func TestFileManipulator(t *testing.T) {
 		for _, theCase := range cases {
 			fm := &FileManipulator{}
 			regularFile := theCase.file
-			ok, _ := fm.IsRegularFileExist(regularFile)
+			ok, _ := fm.IsRegularFileExist(regularFile, "")
 
 			if ok != theCase.want {
 				t.Errorf("Regular file exist == %v, want %v", ok, theCase.want)
@@ -166,7 +166,7 @@ func TestFileManipulator(t *testing.T) {
 
 		for _, theCase := range cases {
 			matchedFiles = make([]string, 0)
-			theCase.fm.ReadDirectory(testDir, theCase.options)
+			theCase.fm.ReadDirectory(testDir, theCase.options, "")
 
 			if len(matchedFiles) != theCase.want {
 				t.Errorf("Matched files == %v, want %v", len(matchedFiles), theCase.want)
@@ -222,7 +222,7 @@ func TestFileManipulator(t *testing.T) {
 		for _, theCase := range cases {
 			fm := &FileManipulator{}
 			regularFile := theCase.file
-			got, _ := fm.GetLineQuantity(regularFile)
+			got, _ := fm.GetLineQuantity(regularFile, "")
 
 			if got != theCase.want {
 				t.Errorf("File line quantity == %v, want %v", got, theCase.want)
@@ -248,7 +248,7 @@ func TestFileManipulator(t *testing.T) {
 		for _, theCase := range cases {
 			fm := &FileManipulator{}
 			regularFile := theCase.file
-			got, _ := fm.GetSlice(regularFile)
+			got, _ := fm.GetSlice(regularFile, "")
 
 			if !reflect.DeepEqual(got, theCase.want) {
 				t.Errorf("Slice == %v, want %v", got, theCase.want)

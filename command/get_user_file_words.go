@@ -19,12 +19,12 @@ func (cmd *GetUserFileWords) Execute(params map[string]interface{}) dto.Response
 		return &dto.ErrorMessage{Message: "Invalid params", From: "GetUserFileWords"}
 	}
 	fileName = filepath.Base(fileName)
-	fullPathDirectory, err := lib.GetFullPathSourceDirectory()
+	fullPathDirectory, err := lib.GetFullPathSourceDirectory(lib.NewCaller())
 	if err != nil {
 		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}
 	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
-	words, err := cmd.FileManipulator.GetSlice(fullPathFile)
+	words, err := cmd.FileManipulator.GetSlice(fullPathFile, "")
 	if err != nil {
 		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}
