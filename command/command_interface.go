@@ -5,5 +5,5 @@ package command
 import "dictionary/dto"
 
 type CommandInterface interface {
-	Execute(params map[string]interface{}) dto.ResponseInterface
+	Execute(payload dto.RequestInterface) dto.ResponseInterface
 }

@@ -6,7 +6,6 @@ import (
 	cmd "dictionary/command"
 	lib "dictionary/library"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -17,53 +16,52 @@ func main() {
 	invoker := cmd.NewCommandInvoker()
 
 	http.HandleFunc("/dictionary/run.php", func(writer http.ResponseWriter, request *http.Request) {
+		lib.Log(lib.LogLevelDebug, "\n---------------- Triggered handler for `/dictionary/run.php` route ----------------\n")
 
-		lib.Log(lib.LogLevelDebug, lib.ColorBlue, "---------------- Triggered handler for `/dictionary/run.php` route ----------------", lib.ColorReset)
-
+		lib.Log(lib.LogLevelDebug, "RequestURI:", request.RequestURI)
 		urlStruct, err := url.Parse(request.RequestURI)
 		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error parsing URL:", err)
+			lib.Log(lib.LogLevelDebug, "Error Parse:", err)
+			http.Error(writer, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
+		lib.Log(lib.LogLevelDebug, "RawQuery:", urlStruct.RawQuery)
 		urlQuery, err := url.QueryUnescape(urlStruct.RawQuery)
 		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error decoding URL:", err)
+			lib.Log(lib.LogLevelDebug, "Error QueryUnescape:", err)
+			http.Error(writer, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
 		payload := cmd.Payload{}
 		err = json.Unmarshal([]byte(urlQuery), &payload)
 		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error parsing JSON:", err)
+			lib.Log(lib.LogLevelDebug, "Error Unmarshal:", err)
+			http.Error(writer, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
-		lib.Log(lib.LogLevelDebug, fmt.Sprintf("%sStatement: name - %q, params - %q%s\n", lib.ColorCyan, payload.Name, payload.Params, lib.ColorReset))
-
-		result := invoker.Invoke(payload.Name, payload.Params)
-
-		lib.Log(lib.LogLevelDebug, fmt.Sprintf("%sResponse: %q%s\n", lib.ColorGreen, result, lib.ColorReset))
-
+		result := invoker.Invoke(&payload).ToMap()
+		writer.Header().Set("Access-Control-Allow-Origin", "*")
 		writer.Header().Set("Content-Type", "application/json")
-		err = json.NewEncoder(writer).Encode(&result)
-		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error encoding to JSON:", err)
+		if err := json.NewEncoder(writer).Encode(result); err != nil {
+			lib.Log(lib.LogLevelDebug, "Error Encode:", err)
+			http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 	})
 
 	http.HandleFunc("/dictionary/data/", func(writer http.ResponseWriter, request *http.Request) {
+		lib.Log(lib.LogLevelDebug, "\n---------------- Triggered handler for `/dictionary/data/` route ----------------\n")
 
-		lib.Log(lib.LogLevelDebug, lib.ColorBlue, "---------------- Triggered handler for `/dictionary/data/` route ----------------", lib.ColorReset)
+		lib.Log(lib.LogLevelDebug, "RequestURI:", request.RequestURI)
 
 		if strings.HasPrefix(request.URL.Path, "/dictionary/data/") {
-			filePath := request.URL.Path[len("/dictionary/data/"):]
+			filePath := request.URL.Path[len("/dictionary/"):]
 			if extension := filepath.Ext(filePath); extension == ".mp3" {
-
-				lib.Log(lib.LogLevelDebug, fmt.Sprintf("%sFile: %q%s\n", lib.ColorYellow, filePath, lib.ColorReset))
-
-				http.ServeFile(writer, request, "data/"+filePath)
+				lib.Log(lib.LogLevelDebug, "MP3 file path:", filePath)
+				http.ServeFile(writer, request, filePath)
 				return
 			}
 		}
@@ -74,7 +72,7 @@ func main() {
 
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
-		lib.Log(lib.LogLevelDebug, "Error starting server:", err)
+		lib.Log(lib.LogLevelDebug, "Error ListenAndServe:", err)
 		return
 	}
 }

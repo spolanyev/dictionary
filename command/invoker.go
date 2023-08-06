@@ -4,7 +4,9 @@ package command
 
 import (
 	"dictionary/dto"
+	lib "dictionary/library"
 	stor "dictionary/storage"
+	"fmt"
 )
 
 type Invoker struct {
@@ -26,10 +28,18 @@ func NewCommandInvoker() *Invoker {
 	}
 }
 
-func (invoker *Invoker) Invoke(name string, params map[string]interface{}) map[string]interface{} {
-	command, ok := invoker.commands[name]
+func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
+	lib.Log(lib.LogLevelDebug, "Payload:", fmt.Sprintf("%+v\n", payload))
+
+	command, ok := invoker.commands[payload.GetCommandName()]
 	if !ok {
-		return (&dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}).ToMap()
+		lib.Log(lib.LogLevelDebug, "No such command", payload.GetCommandName())
+		err := &dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}
+		return err
 	}
-	return command.Execute(params).ToMap()
+
+	result := command.Execute(payload)
+	lib.Log(lib.LogLevelDebug, "Result:", result.ToMap())
+
+	return result
 }

@@ -6,6 +6,8 @@ I rewrote the server side of my English-Russian dictionary from PHP to Go (even 
 
 ![UI](https://github.com/spolanyev/dictionary/blob/main/UI.png?raw=true)
 
+![Chrome Extension](https://github.com/spolanyev/dictionary/blob/main/chrome-extension.png?raw=true)
+
 # Contacts
 
 If you are hiring, feel free to contact me at [spolanyev@gmail.com](mailto:spolanyev@gmail.com?subject=Go%3A%20vacancy).

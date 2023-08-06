@@ -12,7 +12,7 @@ func TestGetSourceDirectory(t *testing.T) {
 
 	want, err := filepath.Abs(filepath.Dir(filepath.Dir(callerFile)))
 	if err != nil {
-		t.Fatalf("Failed to abs: %s", err)
+		t.Fatalf("Failed to build absolute path: %s", err)
 	}
 
 	cases := []struct {

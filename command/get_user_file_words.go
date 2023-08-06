@@ -13,8 +13,8 @@ type GetUserFileWords struct {
 	FileManipulator *lib.FileManipulator
 }
 
-func (cmd *GetUserFileWords) Execute(params map[string]interface{}) dto.ResponseInterface {
-	fileName, ok := params["file"].(string)
+func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
+	fileName, ok := payload.GetCommandParameters()["file"].(string)
 	if !ok {
 		return &dto.ErrorMessage{Message: "Invalid params", From: "GetUserFileWords"}
 	}
