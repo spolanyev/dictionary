@@ -6,7 +6,9 @@ I rewrote the server side of my English-Russian dictionary from PHP to Go (even 
 
 ![UI](https://github.com/spolanyev/dictionary/blob/main/UI.png?raw=true)
 
-![Chrome Extension](https://github.com/spolanyev/dictionary/blob/main/chrome-extension.png?raw=true)
+![Chrome Extension Menu](https://github.com/spolanyev/dictionary/blob/main/chrome-extension-context-menu.png?raw=true)
+
+![Chrome Extension Translation](https://github.com/spolanyev/dictionary/blob/main/chrome-extension-translation.png?raw=true)
 
 # Contacts
 
