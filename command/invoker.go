@@ -10,20 +10,21 @@ import (
 )
 
 type Invoker struct {
-	commands map[string]CommandInterface
+	commands map[CommandName]CommandInterface
 }
 
 func NewCommandInvoker() *Invoker {
 	loader := stor.GetLoader()
 	return &Invoker{
-		commands: map[string]CommandInterface{
-			"getUserFiles":       &GetUserFiles{},
-			"getUserFileWords":   &GetUserFileWords{},
-			"getLetterWords":     &GetLetterWords{},
-			"getWordInformation": NewGetWordInformationCommand(loader),
-			"getWordDetails":     NewGetWordDetailsCommand(loader),
-			"updateWordDetails":  &UpdateWordDetails{},
-			"searchWord":         &SearchWord{},
+		commands: map[CommandName]CommandInterface{
+			GetUserFilesCommand:       &GetUserFiles{},
+			GetUserFileWordsCommand:   &GetUserFileWords{},
+			GetLetterWordsCommand:     &GetLetterWords{},
+			GetWordInformationCommand: NewGetWordInformationCommand(loader),
+			GetWordDetailsCommand:     NewGetWordDetailsCommand(loader),
+			UpdateWordDetailsCommand:  &UpdateWordDetails{},
+			SearchWordCommand:         &SearchWord{},
+			AddWordToListCommand:      &AddWordToList{},
 		},
 	}
 }
@@ -31,15 +32,14 @@ func NewCommandInvoker() *Invoker {
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
 	lib.Log(lib.LogLevelDebug, "Payload:", fmt.Sprintf("%+v\n", payload))
 
-	command, ok := invoker.commands[payload.GetCommandName()]
+	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
 	if !ok {
-		lib.Log(lib.LogLevelDebug, "No such command", payload.GetCommandName())
+		lib.Log(lib.LogLevelDebug, "No such command:", payload.GetCommandName())
 		err := &dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}
 		return err
 	}
 
 	result := command.Execute(payload)
 	lib.Log(lib.LogLevelDebug, "Result:", result.ToMap())
-
 	return result
 }

@@ -16,34 +16,71 @@ func main() {
 	invoker := cmd.NewCommandInvoker()
 
 	http.HandleFunc("/dictionary/run.php", func(writer http.ResponseWriter, request *http.Request) {
-		lib.Log(lib.LogLevelDebug, "\n---------------- Triggered handler for `/dictionary/run.php` route ----------------\n")
+		lib.Log(lib.LogLevelDebug, "\n---------------- Triggered handler for `/dictionary/run.php` route, method "+request.Method+" ----------------\n")
 
-		lib.Log(lib.LogLevelDebug, "RequestURI:", request.RequestURI)
-		urlStruct, err := url.Parse(request.RequestURI)
-		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error Parse:", err)
-			http.Error(writer, "Bad Request", http.StatusBadRequest)
-			return
-		}
+		writer.Header().Set("Access-Control-Allow-Origin", "*")
 
-		lib.Log(lib.LogLevelDebug, "RawQuery:", urlStruct.RawQuery)
-		urlQuery, err := url.QueryUnescape(urlStruct.RawQuery)
-		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error QueryUnescape:", err)
-			http.Error(writer, "Bad Request", http.StatusBadRequest)
+		if request.Method == http.MethodOptions {
+			writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT")
+			writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			writer.WriteHeader(http.StatusOK)
 			return
 		}
 
 		payload := cmd.Payload{}
-		err = json.Unmarshal([]byte(urlQuery), &payload)
-		if err != nil {
-			lib.Log(lib.LogLevelDebug, "Error Unmarshal:", err)
-			http.Error(writer, "Bad Request", http.StatusBadRequest)
+
+		if request.Method == http.MethodGet {
+			lib.Log(lib.LogLevelDebug, "RequestURI:", request.RequestURI)
+			urlStruct, err := url.Parse(request.RequestURI)
+			if err != nil {
+				lib.Log(lib.LogLevelDebug, "Error Parse:", err)
+				http.Error(writer, "Bad Request", http.StatusBadRequest)
+				return
+			}
+
+			lib.Log(lib.LogLevelDebug, "RawQuery:", urlStruct.RawQuery)
+			urlQuery, err := url.QueryUnescape(urlStruct.RawQuery)
+			if err != nil {
+				lib.Log(lib.LogLevelDebug, "Error QueryUnescape:", err)
+				http.Error(writer, "Bad Request", http.StatusBadRequest)
+				return
+			}
+
+			err = json.Unmarshal([]byte(urlQuery), &payload)
+			if err != nil {
+				lib.Log(lib.LogLevelDebug, "Error Unmarshal:", err)
+				http.Error(writer, "Bad Request", http.StatusBadRequest)
+				return
+			}
+		} else if request.Method == http.MethodPost || request.Method == http.MethodPut {
+			lib.Log(lib.LogLevelDebug, "Body:", request.Body)
+			err := json.NewDecoder(request.Body).Decode(&payload)
+			if err != nil {
+				lib.Log(lib.LogLevelDebug, "Error Decode:", err)
+				http.Error(writer, "Bad Request", http.StatusBadRequest)
+				return
+			}
+		} else {
+			lib.Log(lib.LogLevelDebug, "Unhandled HTTP method")
+			http.Error(writer, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		commandName := cmd.CommandName(payload.GetCommandName())
+		requiredMethod, ok := cmd.CommandMethods[commandName]
+		if !ok {
+			lib.Log(lib.LogLevelDebug, "No such command:", commandName)
+			http.Error(writer, "Command not found", http.StatusNotFound)
+			return
+		}
+
+		if request.Method != requiredMethod {
+			lib.Log(lib.LogLevelDebug, "Unexpected method for a command")
+			http.Error(writer, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
 		result := invoker.Invoke(&payload).ToMap()
-		writer.Header().Set("Access-Control-Allow-Origin", "*")
 		writer.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(writer).Encode(result); err != nil {
 			lib.Log(lib.LogLevelDebug, "Error Encode:", err)
