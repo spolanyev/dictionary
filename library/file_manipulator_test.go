@@ -256,4 +256,33 @@ func TestFileManipulator(t *testing.T) {
 		}
 	})
 
+	t.Run("AddLine", func(t *testing.T) {
+		cases := []struct {
+			file    string
+			content string
+			want    string
+		}{
+			{
+				filepath.Join(testDir, "lines.txt"),
+				"aaaaaa",
+				"aaaaaa\n",
+			},
+			{
+				filepath.Join(testDir, "lines.txt"),
+				"bbbbbb",
+				"aaaaaa\nbbbbbb\n",
+			},
+		}
+
+		for _, theCase := range cases {
+			fm := &FileManipulator{}
+			regularFile := theCase.file
+			_, _ = fm.AddLine(regularFile, theCase.content, "")
+			got, _ := fm.Read(regularFile)
+
+			if got != theCase.want {
+				t.Errorf("File content == %v, want %v", got, theCase.want)
+			}
+		}
+	})
 }

@@ -6,6 +6,7 @@ import (
 	cmd "dictionary/command"
 	lib "dictionary/library"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -53,7 +54,7 @@ func main() {
 				return
 			}
 		} else if request.Method == http.MethodPost || request.Method == http.MethodPut {
-			lib.Log(lib.LogLevelDebug, "Body:", request.Body)
+			lib.Log(lib.LogLevelDebug, "Body:", fmt.Sprintf("%+v\n", request.Body))
 			err := json.NewDecoder(request.Body).Decode(&payload)
 			if err != nil {
 				lib.Log(lib.LogLevelDebug, "Error Decode:", err)
