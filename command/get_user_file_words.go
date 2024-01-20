@@ -24,7 +24,7 @@ func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseI
 		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}
 	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
-	words, err := cmd.FileManipulator.GetSlice(fullPathFile, "")
+	words, err := cmd.FileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
 		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
 	}

@@ -230,7 +230,7 @@ func TestFileManipulator(t *testing.T) {
 		}
 	})
 
-	t.Run("GetSlice", func(t *testing.T) {
+	t.Run("GetLines", func(t *testing.T) {
 		cases := []struct {
 			file string
 			want []string
@@ -248,7 +248,7 @@ func TestFileManipulator(t *testing.T) {
 		for _, theCase := range cases {
 			fm := &FileManipulator{}
 			regularFile := theCase.file
-			got, _ := fm.GetSlice(regularFile, "")
+			got, _ := fm.GetLines(regularFile, "")
 
 			if !reflect.DeepEqual(got, theCase.want) {
 				t.Errorf("Slice == %v, want %v", got, theCase.want)
