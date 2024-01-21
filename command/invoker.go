@@ -24,7 +24,8 @@ func NewCommandInvoker() *Invoker {
 			GetWordDetailsCommand:     NewGetWordDetailsCommand(loader),
 			UpdateWordDetailsCommand:  &UpdateWordDetails{},
 			SearchWordCommand:         &SearchWord{},
-			AddWordToListCommand:      &AddWordToList{},
+			AddWordToFileCommand:      &AddWordToFile{},
+			GetWordFromFileCommand:    &GetWordFromFile{},
 		},
 	}
 }
