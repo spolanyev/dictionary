@@ -3,10 +3,21 @@
 package dto
 
 type Message struct {
-	Message string
-	From    string
-	Data    interface{}
-	IsError bool
+	Message        string
+	From           string
+	Data           interface{}
+	IsError        bool
+	HttpStatusCode int
+}
+
+func NewMessage(message, from string, data interface{}, isError bool, httpStatusCode int) *Message {
+	return &Message{
+		Message:        message,
+		From:           from,
+		Data:           data,
+		IsError:        isError,
+		HttpStatusCode: httpStatusCode,
+	}
 }
 
 func (message *Message) ToMap() map[string]interface{} {
@@ -21,5 +32,6 @@ func (message *Message) ToMap() map[string]interface{} {
 		}
 	}
 	result["isError"] = message.IsError
+	result["httpStatusCode"] = message.HttpStatusCode
 	return result
 }

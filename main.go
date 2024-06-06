@@ -82,7 +82,15 @@ func main() {
 		}
 
 		result := invoker.Invoke(&payload).ToMap()
+		httpStatusCode, ok := result["httpStatusCode"].(int)
+		if !ok {
+			lib.Log(lib.LogLevelDebug, "Cannot convert httpStatusCode to int:", result["httpStatusCode"])
+			http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
 		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(httpStatusCode)
 		if err := json.NewEncoder(writer).Encode(result); err != nil {
 			lib.Log(lib.LogLevelDebug, "Error Encode:", err)
 			http.Error(writer, "Internal Server Error", http.StatusInternalServerError)

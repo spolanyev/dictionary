@@ -23,28 +23,32 @@ func TestMessageToMap(t *testing.T) {
 		want    map[string]interface{}
 	}{
 		{&Message{
-			Message: "Hello",
-			From:    "John",
-			Data:    FieldValueWithToMap{SomeField: 42},
-			IsError: false,
+			Message:        "Hello",
+			From:           "John",
+			Data:           FieldValueWithToMap{SomeField: 42},
+			IsError:        false,
+			HttpStatusCode: 200,
 		}, map[string]interface{}{
 			"message": "Hello",
 			"from":    "John",
 			"data": map[string]interface{}{
 				"answer": 42,
 			},
-			"isError": false,
+			"isError":        false,
+			"httpStatusCode": 200,
 		}},
 		{&Message{
-			Message: "Bye",
-			From:    "John",
-			Data:    21,
-			IsError: true,
+			Message:        "Bye",
+			From:           "John",
+			Data:           21,
+			IsError:        true,
+			HttpStatusCode: 400,
 		}, map[string]interface{}{
-			"message": "Bye",
-			"from":    "John",
-			"data":    21,
-			"isError": true,
+			"message":        "Bye",
+			"from":           "John",
+			"data":           21,
+			"isError":        true,
+			"httpStatusCode": 400,
 		}},
 	}
 

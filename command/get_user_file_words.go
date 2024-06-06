@@ -6,6 +6,7 @@ import (
 	"dictionary/dto"
 	lib "dictionary/library"
 	stor "dictionary/storage"
+	"net/http"
 	"path/filepath"
 )
 
@@ -16,17 +17,17 @@ type GetUserFileWords struct {
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
 	fileName, ok := payload.GetCommandParameters()["file"].(string)
 	if !ok {
-		return &dto.ErrorMessage{Message: "Invalid params", From: "GetUserFileWords"}
+		return dto.NewErrorMessage("Invalid params", "GetUserFileWords")
 	}
 	fileName = filepath.Base(fileName)
 	fullPathDirectory, err := lib.GetFullPathSourceDirectory(lib.NewCaller())
 	if err != nil {
-		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
+		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
 	}
 	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
 	words, err := cmd.FileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
-		return &dto.ErrorMessage{Message: err.Error(), From: "GetUserFileWords"}
+		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
 	}
-	return &dto.SuccessMessage{From: "getUserFileWords", Data: words}
+	return dto.NewSuccessResultMessage("getUserFileWords", words)
 }

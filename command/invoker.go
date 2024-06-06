@@ -14,7 +14,8 @@ type Invoker struct {
 }
 
 func NewCommandInvoker() *Invoker {
-	loader := stor.GetLoader()
+	storage := stor.GetStorage()
+	loader := stor.GetLoader(storage)
 	return &Invoker{
 		commands: map[CommandName]CommandInterface{
 			GetUserFilesCommand:       &GetUserFiles{},
@@ -22,7 +23,7 @@ func NewCommandInvoker() *Invoker {
 			GetLetterWordsCommand:     &GetLetterWords{},
 			GetWordInformationCommand: NewGetWordInformationCommand(loader),
 			GetWordDetailsCommand:     NewGetWordDetailsCommand(loader),
-			UpdateWordDetailsCommand:  &UpdateWordDetails{},
+			UpdateWordDetailsCommand:  NewUpdateWordDetailsCommand(storage),
 			SearchWordCommand:         &SearchWord{},
 			AddWordToFileCommand:      &AddWordToFile{},
 			GetWordFromFileCommand:    &GetWordFromFile{},
@@ -36,7 +37,7 @@ func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterfa
 	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
 	if !ok {
 		lib.Log(lib.LogLevelDebug, "No such command:", payload.GetCommandName())
-		err := &dto.ErrorMessage{Message: "Unknown command", From: "Invoke"}
+		err := dto.NewErrorMessage("Unknown command", "Invoke")
 		return err
 	}
 
