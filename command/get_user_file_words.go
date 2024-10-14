@@ -11,7 +11,11 @@ import (
 )
 
 type GetUserFileWords struct {
-	FileManipulator *lib.FileManipulator
+	fileManipulator *lib.FileManipulator
+}
+
+func NewGetUserFileWords(fileManipulator *lib.FileManipulator) *GetUserFileWords {
+	return &GetUserFileWords{fileManipulator: fileManipulator}
 }
 
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
@@ -25,7 +29,7 @@ func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseI
 		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
 	}
 	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
-	words, err := cmd.FileManipulator.GetLines(fullPathFile, "")
+	words, err := cmd.fileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
 		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
 	}

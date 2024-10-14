@@ -5,7 +5,6 @@ package command
 import (
 	"dictionary/dto"
 	lib "dictionary/library"
-	stor "dictionary/storage"
 	"fmt"
 )
 
@@ -13,22 +12,14 @@ type Invoker struct {
 	commands map[CommandName]CommandInterface
 }
 
-func NewCommandInvoker() *Invoker {
-	storage := stor.GetStorage()
-	loader := stor.GetLoader(storage)
+func NewInvoker() *Invoker {
 	return &Invoker{
-		commands: map[CommandName]CommandInterface{
-			GetUserFilesCommand:       &GetUserFiles{},
-			GetUserFileWordsCommand:   &GetUserFileWords{},
-			GetLetterWordsCommand:     &GetLetterWords{},
-			GetWordInformationCommand: NewGetWordInformationCommand(loader),
-			GetWordDetailsCommand:     NewGetWordDetailsCommand(loader),
-			UpdateWordDetailsCommand:  NewUpdateWordDetailsCommand(storage),
-			SearchWordCommand:         &SearchWord{},
-			AddWordToFileCommand:      &AddWordToFile{},
-			GetWordFromFileCommand:    &GetWordFromFile{},
-		},
+		commands: make(map[CommandName]CommandInterface),
 	}
+}
+
+func (invoker *Invoker) RegisterCommand(name CommandName, command CommandInterface) {
+	invoker.commands[name] = command
 }
 
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {

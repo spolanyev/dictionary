@@ -5,6 +5,7 @@ package main
 import (
 	cmd "dictionary/command"
 	lib "dictionary/library"
+	stor "dictionary/storage"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,7 +15,20 @@ import (
 )
 
 func main() {
-	invoker := cmd.NewCommandInvoker()
+	commandInvoker := cmd.NewInvoker()
+	fileManipulator := lib.NewFileManipulator()
+	wordStorage := stor.NewWordFileStorage(fileManipulator)
+	wordLoader := stor.NewWordDataLoader(wordStorage)
+
+	commandInvoker.RegisterCommand(cmd.GetUserFilesCommand, cmd.NewGetUserFiles(fileManipulator))
+	commandInvoker.RegisterCommand(cmd.GetUserFileWordsCommand, cmd.NewGetUserFileWords(fileManipulator))
+	commandInvoker.RegisterCommand(cmd.GetLetterWordsCommand, cmd.NewGetLetterWords(fileManipulator))
+	commandInvoker.RegisterCommand(cmd.GetWordInformationCommand, cmd.NewGetWordInformation(wordLoader))
+	commandInvoker.RegisterCommand(cmd.GetWordDetailsCommand, cmd.NewGetWordDetails(wordLoader))
+	commandInvoker.RegisterCommand(cmd.UpdateWordDetailsCommand, cmd.NewUpdateWordDetails(wordStorage))
+	commandInvoker.RegisterCommand(cmd.SearchWordCommand, cmd.NewSearchWord(fileManipulator))
+	commandInvoker.RegisterCommand(cmd.AddWordToFileCommand, cmd.NewAddWordToFile(fileManipulator))
+	commandInvoker.RegisterCommand(cmd.GetWordFromFileCommand, cmd.NewGetWordFromFile(fileManipulator))
 
 	http.HandleFunc("/dictionary/run.php", func(writer http.ResponseWriter, request *http.Request) {
 		lib.Log(lib.LogLevelDebug, "\n---------------- Triggered handler for `/dictionary/run.php` route, method "+request.Method+" ----------------\n")
@@ -81,7 +95,7 @@ func main() {
 			return
 		}
 
-		result := invoker.Invoke(&payload).ToMap()
+		result := commandInvoker.Invoke(&payload).ToMap()
 		httpStatusCode, ok := result["httpStatusCode"].(int)
 		if !ok {
 			lib.Log(lib.LogLevelDebug, "Cannot convert httpStatusCode to int:", result["httpStatusCode"])
