@@ -6,4 +6,5 @@ import "dictionary/dto"
 
 type CommandInterface interface {
 	Execute(payload dto.RequestInterface) dto.ResponseInterface
+	GetName() CommandName
 }

@@ -18,8 +18,8 @@ func NewInvoker() *Invoker {
 	}
 }
 
-func (invoker *Invoker) RegisterCommand(name CommandName, command CommandInterface) {
-	invoker.commands[name] = command
+func (invoker *Invoker) RegisterCommand(command CommandInterface) {
+	invoker.commands[command.GetName()] = command
 }
 
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {

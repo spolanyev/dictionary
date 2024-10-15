@@ -18,6 +18,10 @@ func NewGetUserFileWords(fileManipulator *lib.FileManipulator) *GetUserFileWords
 	return &GetUserFileWords{fileManipulator: fileManipulator}
 }
 
+func (*GetUserFileWords) GetName() CommandName {
+	return GetUserFileWordsCommand
+}
+
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
 	fileName, ok := payload.GetCommandParameters()["file"].(string)
 	if !ok {
