@@ -25,17 +25,17 @@ func (*GetUserFileWords) GetName() CommandName {
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
 	fileName, ok := payload.GetCommandParameters()["file"].(string)
 	if !ok {
-		return dto.NewErrorMessage("Invalid params", "GetUserFileWords")
+		return dto.NewErrorMessage("Invalid params", string(cmd.GetName()))
 	}
 	fileName = filepath.Base(fileName)
 	fullPathDirectory, err := lib.GetFullPathSourceDirectory(lib.NewCaller())
 	if err != nil {
-		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
+		return dto.NewErrorMessage(err.Error(), string(cmd.GetName()), http.StatusInternalServerError)
 	}
 	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
 	words, err := cmd.fileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
-		return dto.NewErrorMessage(err.Error(), "GetUserFileWords", http.StatusInternalServerError)
+		return dto.NewErrorMessage(err.Error(), string(cmd.GetName()), http.StatusInternalServerError)
 	}
-	return dto.NewSuccessResultMessage("getUserFileWords", words)
+	return dto.NewSuccessResultMessage(string(cmd.GetName()), words)
 }
