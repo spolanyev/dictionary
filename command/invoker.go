@@ -4,7 +4,7 @@ package command
 
 import (
 	"dictionary/dto"
-	lib "dictionary/library"
+	"dictionary/logger"
 	"fmt"
 )
 
@@ -23,16 +23,16 @@ func (invoker *Invoker) RegisterCommand(command CommandInterface) {
 }
 
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
-	lib.Log(lib.LogLevelDebug, "Payload:", fmt.Sprintf("%+v\n", payload))
+	logger.LogMessage("Payload", fmt.Sprintf("%+v", payload))
 
 	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
 	if !ok {
-		lib.Log(lib.LogLevelDebug, "No such command:", payload.GetCommandName())
+		logger.LogMessage("No such command", payload.GetCommandName())
 		err := dto.NewErrorMessage("Unknown command", "Invoke")
 		return err
 	}
 
 	result := command.Execute(payload)
-	lib.Log(lib.LogLevelDebug, "Result:", result.ToMap())
+	logger.LogMessage("Result", result.ToMap())
 	return result
 }
