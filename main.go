@@ -4,9 +4,10 @@ package main
 
 import (
 	cmd "dictionary/command"
+	dic "dictionary/dictionary"
 	lib "dictionary/library"
 	"dictionary/logger"
-	"dictionary/server"
+	serv "dictionary/server"
 	stor "dictionary/storage"
 	"os"
 )
@@ -27,7 +28,7 @@ func main() {
 	commandInvoker.RegisterCommand(cmd.NewAddWordToFile(fileManipulator))
 	commandInvoker.RegisterCommand(cmd.NewGetWordFromFile(fileManipulator))
 
-	if err := server.NewServer(commandInvoker).Start(); err != nil {
+	if err := serv.NewServer(commandInvoker, serv.DictionaryKeyHttpStatusMapping, dic.Command).Start(); err != nil {
 		logger.LogError(err, "Start")
 		os.Exit(1)
 	}

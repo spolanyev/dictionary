@@ -23,16 +23,16 @@ func (invoker *Invoker) RegisterCommand(command CommandInterface) {
 }
 
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
-	logger.LogMessage("Payload", fmt.Sprintf("%+v", payload))
+	logger.LogMessage("payload", fmt.Sprintf("%+v", payload))
 
 	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
 	if !ok {
-		logger.LogMessage("No such command", payload.GetCommandName())
+		logger.LogMessage("commandName", payload.GetCommandName())
 		err := dto.NewErrorMessage("Unknown command", "Invoke")
 		return err
 	}
 
 	result := command.Execute(payload)
-	logger.LogMessage("Result", result.ToMap())
+	logger.LogMessage("result", result.ToMap())
 	return result
 }

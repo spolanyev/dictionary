@@ -24,7 +24,7 @@ var commandMethodMapping = []commandMethodPair{
 	{cmd.GetWordFromFileCommand, http.MethodGet},
 }
 
-var dictionaryKeyHttpStatusMapping = map[cmd.CommandName]map[string]int{
+var DictionaryKeyHttpStatusMapping = map[cmd.CommandName]map[string]int{
 	cmd.AddWordToFileCommand: {
 		"invalid_params":      http.StatusBadRequest,
 		"invalid_values":      http.StatusBadRequest,
