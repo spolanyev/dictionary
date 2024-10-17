@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-type CommandMethodPair struct {
-	CommandName cmd.CommandName
-	HttpMethod  string
+type commandMethodPair struct {
+	commandName cmd.CommandName
+	httpMethod  string
 }
 
-var commandMethodMapping = []CommandMethodPair{
+var commandMethodMapping = []commandMethodPair{
 	{cmd.GetUserFilesCommand, http.MethodGet},
 	{cmd.GetUserFileWordsCommand, http.MethodGet},
 	{cmd.GetLetterWordsCommand, http.MethodGet},
@@ -24,7 +24,7 @@ var commandMethodMapping = []CommandMethodPair{
 	{cmd.GetWordFromFileCommand, http.MethodGet},
 }
 
-var DictionaryKeyHttpStatusMapping = map[cmd.CommandName]map[string]int{
+var dictionaryKeyHttpStatusMapping = map[cmd.CommandName]map[string]int{
 	cmd.AddWordToFileCommand: {
 		"invalid_params":      http.StatusBadRequest,
 		"invalid_values":      http.StatusBadRequest,
