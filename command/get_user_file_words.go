@@ -5,6 +5,7 @@ package command
 import (
 	"dictionary/dto"
 	lib "dictionary/library"
+	"dictionary/logger"
 	stor "dictionary/storage"
 	"path/filepath"
 )
@@ -24,6 +25,7 @@ func (*GetUserFileWords) GetName() CommandName {
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
 	fileName, ok := payload.GetCommandParameters()["file"].(string)
 	if !ok {
+		logger.LogMessage("file", payload.GetCommandParameters()["file"])
 		return dto.NewErrorMessage("invalid_params", string(cmd.GetName()))
 	}
 	fileName = filepath.Base(fileName)

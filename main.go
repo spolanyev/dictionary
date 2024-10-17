@@ -5,6 +5,7 @@ package main
 import (
 	cmd "dictionary/command"
 	lib "dictionary/library"
+	"dictionary/logger"
 	"dictionary/server"
 	stor "dictionary/storage"
 	"os"
@@ -27,6 +28,7 @@ func main() {
 	commandInvoker.RegisterCommand(cmd.NewGetWordFromFile(fileManipulator))
 
 	if err := server.NewServer(commandInvoker).Start(); err != nil {
+		logger.LogError(err, "Start")
 		os.Exit(1)
 	}
 }
