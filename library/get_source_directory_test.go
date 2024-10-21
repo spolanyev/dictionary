@@ -3,11 +3,18 @@
 package library
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 )
 
 func TestGetSourceDirectory(t *testing.T) {
+	//use verbose output
+	err := os.Setenv("LOG_LEVEL", "debug")
+	if err != nil {
+		t.Fatalf("Failed to set environment variable: %v", err)
+	}
+
 	callerFile := "/project/directory/nested/file.go"
 
 	want, err := filepath.Abs(filepath.Dir(filepath.Dir(callerFile)))

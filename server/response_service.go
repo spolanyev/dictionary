@@ -4,7 +4,6 @@ package server
 
 import (
 	cmd "dictionary/command"
-	"dictionary/logger"
 	serv "dictionary/service"
 	"net/http"
 )
@@ -25,8 +24,6 @@ func (resp *ResponseService) BuildResponse(commandName cmd.CommandName, dictiona
 	//get HTTP status
 	httpStatus, ok := resp.httpStatusMapping[commandName][dictionaryKey]
 	if !ok {
-		logger.LogMessage("commandName", commandName)
-		logger.LogMessage("dictionaryKey", dictionaryKey)
 		httpStatus = http.StatusInternalServerError // default 500
 	}
 

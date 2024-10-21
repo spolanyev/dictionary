@@ -21,9 +21,11 @@ func NewMessageService(messageMapping map[cmd.CommandName]map[string]string) *Me
 func (ms *MessageService) BuildMessage(commandName cmd.CommandName, dictionaryKey string) *dto.Message {
 	message, ok := ms.messageMapping[commandName][dictionaryKey]
 	if !ok {
-		logger.LogMessage("commandName", commandName)
-		logger.LogMessage("dictionaryKey", dictionaryKey)
 		message = dictionaryKey //default message is the key itself
+		if dictionaryKey != "" {
+			logger.LogMessage("commandName", commandName)
+			logger.LogMessage("dictionaryKey", dictionaryKey)
+		}
 	}
 
 	return dto.NewMessage(message, "server", nil, false)
