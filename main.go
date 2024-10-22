@@ -15,7 +15,10 @@ import (
 func main() {
 	commandInvoker := cmd.NewInvoker()
 	fileManipulator := lib.NewFileManipulator()
-	wordStorage := stor.NewWordFileStorage(fileManipulator)
+	wordStorage, err := stor.NewWordFileStorage(fileManipulator)
+	if err != nil {
+		os.Exit(2)
+	}
 	wordLoader := stor.NewWordDataLoader(wordStorage)
 
 	commandInvoker.RegisterCommand(cmd.NewGetUserFiles(fileManipulator))
