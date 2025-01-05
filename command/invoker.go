@@ -25,6 +25,8 @@ func (invoker *Invoker) RegisterCommand(command CommandInterface) {
 func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
 	logger.LogMessage("payload", fmt.Sprintf("%+v", payload))
 
+	payload.SanitizeParameters()
+
 	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
 	if !ok {
 		logger.LogMessage("commandName", payload.GetCommandName())
