@@ -4,24 +4,42 @@ package service
 
 import (
 	cmd "dictionary/command"
+	dic "dictionary/dictionary"
+	msg "dictionary/dictionary/message"
 	"dictionary/dto"
 	"dictionary/logger"
 )
 
 type MessageService struct {
-	messageMapping map[cmd.CommandName]map[string]string
+	specific dic.CommandMessage
+	common   dic.CommonMessage
 }
 
-func NewMessageService(messageMapping map[cmd.CommandName]map[string]string) *MessageService {
+func NewMessageService(specific dic.CommandMessage, common dic.CommonMessage) *MessageService {
+
 	return &MessageService{
-		messageMapping: messageMapping,
+		specific: specific,
+		common:   common,
 	}
 }
 
-func (ms *MessageService) BuildMessage(commandName cmd.CommandName, dictionaryKey string) *dto.Message {
-	message, ok := ms.messageMapping[commandName][dictionaryKey]
-	if !ok {
-		message = dictionaryKey //default message is the key itself
+func (ms *MessageService) BuildMessage(commandName cmd.CommandName, dictionaryKey msg.Key) *dto.Message {
+	message := ""
+
+	if cmdMessages, ok := ms.specific[commandName]; ok {
+		if msgText, found := cmdMessages[dictionaryKey]; found {
+			message = msgText
+		}
+	}
+
+	if message == "" {
+		if commonMsg, ok := ms.common[dictionaryKey]; ok {
+			message = commonMsg
+		}
+	}
+
+	if message == "" {
+		message = string(dictionaryKey)
 		if dictionaryKey != "" {
 			logger.LogMessage("commandName", commandName)
 			logger.LogMessage("dictionaryKey", dictionaryKey)

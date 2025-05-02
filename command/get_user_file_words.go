@@ -3,6 +3,7 @@
 package command
 
 import (
+	msg "dictionary/dictionary/message"
 	"dictionary/dto"
 	lib "dictionary/library"
 	"dictionary/logger"
@@ -14,8 +15,8 @@ type GetUserFileWords struct {
 	fileManipulator *lib.FileManipulator
 }
 
-func NewGetUserFileWords(fileManipulator *lib.FileManipulator) *GetUserFileWords {
-	return &GetUserFileWords{fileManipulator: fileManipulator}
+func NewGetUserFileWords(fm *lib.FileManipulator) *GetUserFileWords {
+	return &GetUserFileWords{fileManipulator: fm}
 }
 
 func (*GetUserFileWords) GetName() CommandName {
@@ -23,20 +24,22 @@ func (*GetUserFileWords) GetName() CommandName {
 }
 
 func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
-	fileName, ok := payload.GetCommandParameters()["file"].(string)
-	if !ok {
-		logger.LogMessage("file", payload.GetCommandParameters()["file"])
-		return dto.NewErrorMessage("invalid_params", string(cmd.GetName()))
+	params := payload.GetCommandParameters()
+	commandName := string(cmd.GetName())
+
+	fileName, ok := params["file"].(string)
+	if !ok || fileName == "" {
+		logger.LogMessage("file", params["file"])
+		return dto.NewErrorMessage(msg.InvalidParams, commandName)
 	}
+
 	fileName = filepath.Base(fileName)
-	fullPathDirectory, err := lib.GetFullPathSourceDirectory(lib.NewCaller())
-	if err != nil {
-		return dto.NewErrorMessage(err.Error(), string(cmd.GetName()))
-	}
-	fullPathFile := filepath.Join(fullPathDirectory, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
+	fullPathFile := filepath.Join(cmd.fileManipulator.SourceDir, stor.PUBLIC_DIR, stor.USER_DATA_DIR, fileName)
+
 	words, err := cmd.fileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
-		return dto.NewErrorMessage(err.Error(), string(cmd.GetName()))
+		return dto.NewErrorMessage(msg.InternalError, commandName)
 	}
-	return dto.NewSuccessResultMessage(string(cmd.GetName()), words)
+
+	return dto.NewSuccessResultMessage(commandName, words)
 }

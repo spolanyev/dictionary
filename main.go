@@ -6,7 +6,6 @@ import (
 	cmd "dictionary/command"
 	dic "dictionary/dictionary"
 	lib "dictionary/library"
-	"dictionary/logger"
 	serv "dictionary/server"
 	stor "dictionary/storage"
 	"os"
@@ -14,11 +13,18 @@ import (
 
 func main() {
 	commandInvoker := cmd.NewInvoker()
-	fileManipulator := lib.NewFileManipulator()
+
+	rootDir, err := lib.GetFullPathSourceDir(lib.NewCaller())
+	if err != nil {
+		os.Exit(3)
+	}
+	fileManipulator := lib.NewFileManipulator(rootDir)
+
 	wordStorage, err := stor.NewWordFileStorage(fileManipulator)
 	if err != nil {
 		os.Exit(2)
 	}
+
 	wordLoader := stor.NewWordDataLoader(wordStorage)
 
 	commandInvoker.RegisterCommand(cmd.NewGetUserFiles(fileManipulator))
@@ -31,8 +37,14 @@ func main() {
 	commandInvoker.RegisterCommand(cmd.NewAddWordToFile(fileManipulator))
 	commandInvoker.RegisterCommand(cmd.NewGetWordFromFile(fileManipulator))
 
-	if err := serv.NewServer(commandInvoker, serv.DictionaryKeyHttpStatusMapping, dic.Command).Start(); err != nil {
-		logger.LogError(err, "Start")
+	server := serv.NewServer(commandInvoker, serv.CommandToStatusMap, dic.CommandMap, dic.CommonMap)
+	if err := server.Start(); err != nil {
 		os.Exit(1)
 	}
 }
+
+//TODO
+//Lie – lie – lay – lain
+//Lie – lie – lied – lied
+
+//add not found word

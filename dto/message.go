@@ -2,6 +2,8 @@
 
 package dto
 
+import msg "dictionary/dictionary/message"
+
 type Message struct {
 	Message string
 	From    string
@@ -18,6 +20,16 @@ func NewMessage(message, from string, data interface{}, isError bool) *Message {
 	}
 }
 
+func NewErrorMessage(message msg.Key, from string) *Message {
+
+	return NewMessage(string(message), from, nil, true)
+}
+
+func NewSuccessResultMessage(from string, data interface{}) *Message {
+
+	return NewMessage("", from, data, false)
+}
+
 func (message *Message) ToMap() map[string]interface{} {
 	result := make(map[string]interface{})
 	result["message"] = message.Message
@@ -30,5 +42,6 @@ func (message *Message) ToMap() map[string]interface{} {
 		}
 	}
 	result["isError"] = message.IsError
+
 	return result
 }

@@ -4,27 +4,31 @@ package server
 
 import (
 	cmd "dictionary/command"
-	serv "dictionary/service"
+	msg "dictionary/dictionary/message"
+	hdlr "dictionary/service"
 	"net/http"
 )
 
+const defaultHttpStatus = http.StatusInternalServerError
+
 type ResponseService struct {
-	httpStatusMapping map[cmd.CommandName]map[string]int
-	messageService    *serv.MessageService
+	CommandStatusMap commandToStatus
+	messageService   *hdlr.MessageService
 }
 
-func NewResponseService(httpStatusMapping map[cmd.CommandName]map[string]int, messageService *serv.MessageService) *ResponseService {
+func NewResponseService(httpStatusMapping commandToStatus, messageService *hdlr.MessageService) *ResponseService {
+
 	return &ResponseService{
-		httpStatusMapping: httpStatusMapping,
-		messageService:    messageService,
+		CommandStatusMap: httpStatusMapping,
+		messageService:   messageService,
 	}
 }
 
-func (resp *ResponseService) BuildResponse(commandName cmd.CommandName, dictionaryKey string, originalData map[string]interface{}) map[string]interface{} {
+func (rs *ResponseService) BuildHttpResponse(commandName cmd.CommandName, dictionaryKey msg.Key, originalData map[string]interface{}) map[string]interface{} {
 	//get HTTP status
-	httpStatus, ok := resp.httpStatusMapping[commandName][dictionaryKey]
+	httpStatus, ok := rs.CommandStatusMap[commandName][dictionaryKey]
 	if !ok {
-		httpStatus = http.StatusInternalServerError // default 500
+		httpStatus = defaultHttpStatus
 	}
 
 	if dictionaryKey == "" {
@@ -32,7 +36,7 @@ func (resp *ResponseService) BuildResponse(commandName cmd.CommandName, dictiona
 	}
 
 	//substitute dictionary key
-	message := resp.messageService.BuildMessage(commandName, dictionaryKey)
+	message := rs.messageService.BuildMessage(commandName, dictionaryKey)
 
 	//decorate result
 	responseData := make(map[string]interface{})

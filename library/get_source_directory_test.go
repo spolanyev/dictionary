@@ -10,14 +10,13 @@ import (
 
 func TestGetSourceDirectory(t *testing.T) {
 	//use verbose output
-	err := os.Setenv("LOG_LEVEL", "debug")
-	if err != nil {
+	if err := os.Setenv("LOG_LEVEL", "debug"); err != nil {
 		t.Fatalf("Failed to set environment variable: %v", err)
 	}
 
 	callerFile := "/project/directory/nested/file.go"
 
-	want, err := filepath.Abs(filepath.Dir(filepath.Dir(callerFile)))
+	want, err := filepath.Abs(filepath.Dir(callerFile))
 	if err != nil {
 		t.Fatalf("Failed to build absolute path: %s", err)
 	}
@@ -44,7 +43,7 @@ func TestGetSourceDirectory(t *testing.T) {
 	}
 
 	for _, theCase := range cases {
-		got, _ := GetFullPathSourceDirectory(theCase.mockCaller)
+		got, _ := GetFullPathSourceDir(theCase.mockCaller)
 		if got != theCase.want {
 			t.Errorf("Test %v: source directory == %v, want %v", theCase.testName, got, theCase.want)
 		}

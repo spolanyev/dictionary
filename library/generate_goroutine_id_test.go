@@ -10,8 +10,7 @@ import (
 
 func TestGoroutineIdGeneration(t *testing.T) {
 	//use verbose output
-	err := os.Setenv("LOG_LEVEL", "debug")
-	if err != nil {
+	if err := os.Setenv("LOG_LEVEL", "debug"); err != nil {
 		t.Fatalf("Failed to set environment variable: %v", err)
 	}
 

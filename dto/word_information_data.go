@@ -9,7 +9,7 @@ type WordInformationData struct {
 }
 
 func (info *WordInformationData) ToMap() map[string]interface{} {
-	typeData := make(map[string]interface{})
+	typeData := make(map[string]interface{}, len(info.Type))
 	for typeName, typeInfo := range info.Type {
 		typeMap := map[string]interface{}{
 			"transcription": typeInfo.Transcription,

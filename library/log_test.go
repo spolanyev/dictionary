@@ -75,8 +75,7 @@ func TestLogLevelOutput(t *testing.T) {
 		oldStdout := os.Stdout
 		os.Stdout = writer
 
-		err = os.Setenv("LOG_LEVEL", theCase.logLevel)
-		if err != nil {
+		if err := os.Setenv("LOG_LEVEL", theCase.logLevel); err != nil {
 			t.Fatalf("Failed to set log level %s: %s", theCase.logLevel, err)
 			return
 		}
@@ -86,8 +85,7 @@ func TestLogLevelOutput(t *testing.T) {
 		}
 
 		os.Stdout = oldStdout
-		err = writer.Close()
-		if err != nil {
+		if err := writer.Close(); err != nil {
 			t.Fatalf("Failed to close writer: %s", err)
 			return
 		}

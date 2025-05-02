@@ -4,55 +4,54 @@ package server
 
 import (
 	cmd "dictionary/command"
+	msg "dictionary/dictionary/message"
 	"net/http"
 )
 
-type commandMethodPair struct {
-	commandName cmd.CommandName
-	httpMethod  string
+var commandToMethod = map[cmd.CommandName]string{
+	cmd.GetUserFilesCommand:       http.MethodGet,
+	cmd.GetUserFileWordsCommand:   http.MethodGet,
+	cmd.GetLetterWordsCommand:     http.MethodGet,
+	cmd.GetWordInformationCommand: http.MethodGet,
+	cmd.GetWordDetailsCommand:     http.MethodGet,
+	cmd.UpdateWordDetailsCommand:  http.MethodPut,
+	cmd.SearchWordCommand:         http.MethodGet,
+	cmd.AddWordToFileCommand:      http.MethodPost,
+	cmd.GetWordFromFileCommand:    http.MethodGet,
 }
 
-var commandMethodMapping = []commandMethodPair{
-	{cmd.GetUserFilesCommand, http.MethodGet},
-	{cmd.GetUserFileWordsCommand, http.MethodGet},
-	{cmd.GetLetterWordsCommand, http.MethodGet},
-	{cmd.GetWordInformationCommand, http.MethodGet},
-	{cmd.GetWordDetailsCommand, http.MethodGet},
-	{cmd.UpdateWordDetailsCommand, http.MethodPut},
-	{cmd.SearchWordCommand, http.MethodGet},
-	{cmd.AddWordToFileCommand, http.MethodPost},
-	{cmd.GetWordFromFileCommand, http.MethodGet},
-}
+type messageToStatus map[msg.Key]int
+type commandToStatus map[cmd.CommandName]messageToStatus
 
-var DictionaryKeyHttpStatusMapping = map[cmd.CommandName]map[string]int{
+var CommandToStatusMap = commandToStatus{
 	cmd.AddWordToFileCommand: {
-		"invalid_params":      http.StatusBadRequest,
-		"invalid_values":      http.StatusBadRequest,
-		"word_already_exists": http.StatusOK,
-		"word_added":          http.StatusCreated,
+		msg.InvalidParams:     http.StatusBadRequest,
+		msg.InvalidValues:     http.StatusBadRequest,
+		msg.WordAlreadyExists: http.StatusOK,
+		msg.WordAdded:         http.StatusCreated,
 	},
 	cmd.GetUserFileWordsCommand: {
-		"invalid_params": http.StatusBadRequest,
+		msg.InvalidParams: http.StatusBadRequest,
 	},
 	cmd.GetWordDetailsCommand: {
-		"invalid_params": http.StatusBadRequest,
-		"invalid_word":   http.StatusBadRequest,
+		msg.InvalidParams: http.StatusBadRequest,
+		msg.InvalidWord:   http.StatusBadRequest,
 	},
 	cmd.GetWordFromFileCommand: {
-		"invalid_params": http.StatusBadRequest,
-		"invalid_word":   http.StatusBadRequest,
-		"index_too_big":  http.StatusBadRequest,
+		msg.InvalidParams: http.StatusBadRequest,
+		msg.InvalidWord:   http.StatusBadRequest,
+		msg.IndexTooBig:   http.StatusBadRequest,
 	},
 	cmd.GetWordInformationCommand: {
-		"invalid_params": http.StatusBadRequest,
-		"invalid_word":   http.StatusBadRequest,
+		msg.InvalidParams: http.StatusBadRequest,
+		msg.InvalidWord:   http.StatusBadRequest,
 	},
 	cmd.SearchWordCommand: {
-		"invalid_params": http.StatusBadRequest,
+		msg.InvalidParams: http.StatusBadRequest,
 	},
 	cmd.UpdateWordDetailsCommand: {
-		"invalid_params": http.StatusBadRequest,
-		"invalid_word":   http.StatusBadRequest,
-		"data_saved":     http.StatusOK,
+		msg.InvalidParams: http.StatusBadRequest,
+		msg.InvalidWord:   http.StatusBadRequest,
+		msg.DataSaved:     http.StatusOK,
 	},
 }

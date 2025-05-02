@@ -3,6 +3,7 @@
 package command
 
 import (
+	msg "dictionary/dictionary/message"
 	"dictionary/dto"
 	"dictionary/logger"
 	"fmt"
@@ -27,14 +28,16 @@ func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterfa
 
 	payload.SanitizeParameters()
 
-	command, ok := invoker.commands[CommandName(payload.GetCommandName())]
+	commandName := payload.GetCommandName()
+	command, ok := invoker.commands[CommandName(commandName)]
 	if !ok {
-		logger.LogMessage("commandName", payload.GetCommandName())
-		err := dto.NewErrorMessage("Unknown command", "Invoke")
-		return err
+		logger.LogMessage("Unknown command:", commandName)
+
+		return dto.NewErrorMessage(msg.InternalError, "Invoke")
 	}
 
 	result := command.Execute(payload)
 	logger.LogMessage("result", result.ToMap())
+
 	return result
 }
