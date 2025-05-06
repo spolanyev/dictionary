@@ -30,7 +30,7 @@ func main() {
 	commandInvoker.RegisterCommand(cmd.NewGetUserFiles(fileManipulator))
 	commandInvoker.RegisterCommand(cmd.NewGetUserFileWords(fileManipulator))
 	commandInvoker.RegisterCommand(cmd.NewGetLetterWords(fileManipulator))
-	commandInvoker.RegisterCommand(cmd.NewGetWordInformation(wordLoader))
+	commandInvoker.RegisterCommand(cmd.NewGetWordInfo(wordLoader))
 	commandInvoker.RegisterCommand(cmd.NewGetWordDetails(wordLoader))
 	commandInvoker.RegisterCommand(cmd.NewUpdateWordDetails(wordStorage))
 	commandInvoker.RegisterCommand(cmd.NewSearchWord(fileManipulator))

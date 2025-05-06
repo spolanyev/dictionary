@@ -8,20 +8,20 @@ import (
 	"net/http"
 )
 
-var commandToMethod = map[cmd.CommandName]string{
-	cmd.GetUserFilesCommand:       http.MethodGet,
-	cmd.GetUserFileWordsCommand:   http.MethodGet,
-	cmd.GetLetterWordsCommand:     http.MethodGet,
-	cmd.GetWordInformationCommand: http.MethodGet,
-	cmd.GetWordDetailsCommand:     http.MethodGet,
-	cmd.UpdateWordDetailsCommand:  http.MethodPut,
-	cmd.SearchWordCommand:         http.MethodGet,
-	cmd.AddWordToFileCommand:      http.MethodPost,
-	cmd.GetWordFromFileCommand:    http.MethodGet,
+var commandToMethod = map[cmd.Name]string{
+	cmd.GetUserFilesCommand:      http.MethodGet,
+	cmd.GetUserFileWordsCommand:  http.MethodGet,
+	cmd.GetLetterWordsCommand:    http.MethodGet,
+	cmd.GetWordInfoCommand:       http.MethodGet,
+	cmd.GetWordDetailsCommand:    http.MethodGet,
+	cmd.UpdateWordDetailsCommand: http.MethodPut,
+	cmd.SearchWordCommand:        http.MethodGet,
+	cmd.AddWordToFileCommand:     http.MethodPost,
+	cmd.GetWordFromFileCommand:   http.MethodGet,
 }
 
 type messageToStatus map[msg.Key]int
-type commandToStatus map[cmd.CommandName]messageToStatus
+type commandToStatus map[cmd.Name]messageToStatus
 
 var CommandToStatusMap = commandToStatus{
 	cmd.AddWordToFileCommand: {
@@ -40,9 +40,10 @@ var CommandToStatusMap = commandToStatus{
 	cmd.GetWordFromFileCommand: {
 		msg.InvalidParams: http.StatusBadRequest,
 		msg.InvalidWord:   http.StatusBadRequest,
+		msg.IndexTooSmall: http.StatusBadRequest,
 		msg.IndexTooBig:   http.StatusBadRequest,
 	},
-	cmd.GetWordInformationCommand: {
+	cmd.GetWordInfoCommand: {
 		msg.InvalidParams: http.StatusBadRequest,
 		msg.InvalidWord:   http.StatusBadRequest,
 	},

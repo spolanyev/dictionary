@@ -2,13 +2,13 @@
 
 package dto
 
-type WordInformationData struct {
+type WordInfoData struct {
 	SafeName string
 	Word     string
 	Type     map[PartOfSpeech]WordTypeData
 }
 
-func (info *WordInformationData) ToMap() map[string]interface{} {
+func (info *WordInfoData) ToMap() map[string]interface{} {
 	typeData := make(map[string]interface{}, len(info.Type))
 	for typeName, typeInfo := range info.Type {
 		typeMap := map[string]interface{}{

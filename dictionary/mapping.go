@@ -11,7 +11,7 @@ type keyToMessage map[msg.Key]string
 
 type CommonMessage keyToMessage
 
-type CommandMessage map[cmd.CommandName]keyToMessage
+type CommandMessage map[cmd.Name]keyToMessage
 
 var CommonMap = CommonMessage{
 	msg.InvalidParams: "Invalid params",
@@ -32,9 +32,10 @@ var CommandMap = CommandMessage{
 	},
 	cmd.GetWordFromFileCommand: {
 		msg.InvalidValues: "Invalid values",
+		msg.IndexTooSmall: "Index too small",
 		msg.IndexTooBig:   "Index too big",
 	},
-	cmd.GetWordInformationCommand: {
+	cmd.GetWordInfoCommand: {
 		msg.InvalidWord: "Invalid word",
 	},
 	cmd.SearchWordCommand: {

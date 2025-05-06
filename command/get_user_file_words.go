@@ -19,17 +19,18 @@ func NewGetUserFileWords(fm *lib.FileManipulator) *GetUserFileWords {
 	return &GetUserFileWords{fileManipulator: fm}
 }
 
-func (*GetUserFileWords) GetName() CommandName {
+func (*GetUserFileWords) GetName() Name {
 	return GetUserFileWordsCommand
 }
 
-func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseInterface {
-	params := payload.GetCommandParameters()
+func (cmd *GetUserFileWords) Execute(payload dto.Request) dto.Response {
+	params := payload.GetParams()
 	commandName := string(cmd.GetName())
 
-	fileName, ok := params["file"].(string)
-	if !ok || fileName == "" {
+	fileName, _ := params["file"].(string)
+	if fileName == "" {
 		logger.LogMessage("file", params["file"])
+
 		return dto.NewErrorMessage(msg.InvalidParams, commandName)
 	}
 
@@ -38,6 +39,7 @@ func (cmd *GetUserFileWords) Execute(payload dto.RequestInterface) dto.ResponseI
 
 	words, err := cmd.fileManipulator.GetLines(fullPathFile, "")
 	if err != nil {
+
 		return dto.NewErrorMessage(msg.InternalError, commandName)
 	}
 

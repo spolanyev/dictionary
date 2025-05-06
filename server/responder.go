@@ -5,26 +5,24 @@ package server
 import (
 	cmd "dictionary/command"
 	msg "dictionary/dictionary/message"
-	hdlr "dictionary/service"
 	"net/http"
 )
 
 const defaultHttpStatus = http.StatusInternalServerError
 
-type ResponseService struct {
+type Responder struct {
 	CommandStatusMap commandToStatus
-	messageService   *hdlr.MessageService
+	messageService   *MessageBuilder
 }
 
-func NewResponseService(httpStatusMapping commandToStatus, messageService *hdlr.MessageService) *ResponseService {
-
-	return &ResponseService{
+func NewResponseService(httpStatusMapping commandToStatus, messageService *MessageBuilder) *Responder {
+	return &Responder{
 		CommandStatusMap: httpStatusMapping,
 		messageService:   messageService,
 	}
 }
 
-func (rs *ResponseService) BuildHttpResponse(commandName cmd.CommandName, dictionaryKey msg.Key, originalData map[string]interface{}) map[string]interface{} {
+func (rs *Responder) BuildHttpResponse(commandName cmd.Name, dictionaryKey msg.Key, originalData map[string]interface{}) map[string]interface{} {
 	//get HTTP status
 	httpStatus, ok := rs.CommandStatusMap[commandName][dictionaryKey]
 	if !ok {

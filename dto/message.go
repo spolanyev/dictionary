@@ -35,7 +35,7 @@ func (message *Message) ToMap() map[string]interface{} {
 	result["message"] = message.Message
 	result["from"] = message.From
 	if message.Data != nil {
-		if response, ok := message.Data.(ResponseInterface); ok {
+		if response, ok := message.Data.(Response); ok {
 			result["data"] = response.ToMap()
 		} else {
 			result["data"] = message.Data

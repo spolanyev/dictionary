@@ -10,26 +10,26 @@ import (
 )
 
 type Invoker struct {
-	commands map[CommandName]CommandInterface
+	commands map[Name]Command
 }
 
 func NewInvoker() *Invoker {
 	return &Invoker{
-		commands: make(map[CommandName]CommandInterface),
+		commands: make(map[Name]Command),
 	}
 }
 
-func (invoker *Invoker) RegisterCommand(command CommandInterface) {
+func (invoker *Invoker) RegisterCommand(command Command) {
 	invoker.commands[command.GetName()] = command
 }
 
-func (invoker *Invoker) Invoke(payload dto.RequestInterface) dto.ResponseInterface {
+func (invoker *Invoker) Invoke(payload dto.Request) dto.Response {
 	logger.LogMessage("payload", fmt.Sprintf("%+v", payload))
 
-	payload.SanitizeParameters()
+	payload.SanitizeParams()
 
 	commandName := payload.GetCommandName()
-	command, ok := invoker.commands[CommandName(commandName)]
+	command, ok := invoker.commands[Name(commandName)]
 	if !ok {
 		logger.LogMessage("Unknown command:", commandName)
 
